@@ -1,0 +1,55 @@
+
+import React, { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+} from 'react-native';
+import { addTrack, setUpPlayer } from '../musicPlayerServices';
+import MusicPlayer from './screens/MusicPlayer';
+
+function App(): JSX.Element {
+  const [isPlayerReady, setIsPlayerReady] = useState(false)
+
+  async function setup() {
+    let isSetup = await setUpPlayer()
+
+    if(isSetup) {
+      await addTrack()
+    }
+    setIsPlayerReady(isSetup)
+  }
+
+  useEffect(() => {
+    setup()
+  }, [])
+  
+
+  if(!isPlayerReady) {
+    return (
+<SafeAreaView>
+  <ActivityIndicator />
+</SafeAreaView>
+    )
+  }
+
+  return (
+    <View style={styles.container}>
+      <StatusBar barStyle={"light-content"} />
+      <MusicPlayer />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container : {
+    flex : 1
+  }
+});
+
+export default App;
